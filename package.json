@@ -1,7 +1,17 @@
 {
   "name": "@kay-is/pulumi-ao",
+  "description": "A Pulumi provider for AO processes",
   "main": "modules/index.ts",
-  "version": "0.0.1",
+  "version": "0.0.2",
+  "author": "Kay Plößer",
+  "repository": "https://github.com/kay-is/pulumi-ao",
+  "license": "MIT",
+  "keywords": [
+    "pulumi",
+    "arweave",
+    "permaweb",
+    "ao"
+  ],
   "scripts": {
     "postinstall": "node scripts/patch-dependencies"
   },
