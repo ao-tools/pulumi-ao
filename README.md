@@ -2,9 +2,45 @@
 
 This is a dynamic Pulumi resource provider for AO processes.
 
-## Usage
+## Setup
 
-### Creating an AO Process
+### Installing Pulumi
+
+    curl -fsSL https://get.pulumi.com | sh
+
+### Creating a Project
+
+Run the following command and choose the TypeScript template.
+
+    pulumi new
+
+### Installing the Provider
+
+    npm i @kay-is/pulumi-ao
+
+### Configuring the Provider
+
+The provider requires a wallet JWK file and an optional gateway URL and scheduler ID.
+
+> Note: Its's possible to pass these values directly to resources.
+
+#### Required
+
+You need to have an Arweave wallet JWK file.
+
+    pulumi config set ao:walletPath /path/to/deployment_wallet.json
+
+#### Optional
+
+The gateway used to fetch code and tags from deployed processes.
+
+    pulumi config set ao:gatewayUrl https://arweave.net
+
+...
+
+    pulumi config set ao:schedulerId _GQ33BkPtZrqxA84vM8Zk-N2aO0toNNu_C-l-rawrBA
+
+## Usage Examples
 
 ```typescript
 import * as ao from "@kay-is/pulumi-ao"
@@ -83,6 +119,8 @@ const process5 = new ao.Process("Process5", {
   moduleId: "Do_Uc2Sju_ffp6Ev0AnLVdPtot15rvMjP-a9VVaA5fM",
   // testnet authority
   authorityId: "fcoN_xJeisVsPXA-trzVAuIiqO3ydLQxM-L4XbrQKzY",
+  gatewayUrl: "https://arweave.net",
+  walletPath: "/path/to/process_5_wallet.json",
   codeId: code.id,
 })
 
