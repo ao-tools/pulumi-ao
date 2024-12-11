@@ -1,0 +1,16 @@
+{
+  "name": "@kay-is/pulumi-ao",
+  "main": "modules/index.ts",
+  "version": "0.0.1",
+  "scripts": {
+    "postinstall": "node scripts/patch-dependencies"
+  },
+  "dependencies": {
+    "@ardrive/turbo-sdk": "^1.21.0",
+    "@permaweb/aoconnect": "^0.0.62",
+    "luabundle": "^1.7.0"
+  },
+  "peerDependencies": {
+    "@pulumi/pulumi": "^3.0.0"
+  }
+}
