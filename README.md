@@ -8,6 +8,25 @@ This is a dynamic Pulumi resource provider for AO processes.
 
     curl -fsSL https://get.pulumi.com | sh
 
+### Choosing a Backend
+
+By default, Pulumi uses a cloud backend to store state. If you don't have a
+Pulumi account, you can use a local backend.
+
+    pulumi login file://./
+
+This will create a `.pulumi` directory in the current working directory.
+
+If you want to use a cloud backend, you can use the following command.
+
+    pulumi login
+
+You can also use S3 or an S3-compatible backend.
+
+    pulumi login 's3://<bucket-name>?region=us-east-1&awssdk=v2&profile=<profile-name>'
+
+    pulumi login 's3://<bucket-name>?endpoint=my.minio.local:8080&disableSSL=true&s3ForcePathStyle=true'
+
 ### Creating a Project
 
 Run the following command and choose the TypeScript template.
