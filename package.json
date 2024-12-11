@@ -2,7 +2,7 @@
   "name": "@kay-is/pulumi-ao",
   "description": "A Pulumi provider for AO processes",
   "main": "modules/index.ts",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Kay Plößer",
   "repository": "https://github.com/kay-is/pulumi-ao",
   "license": "MIT",
