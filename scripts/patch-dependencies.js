@@ -4,7 +4,7 @@ const fs = require("node:fs")
 // Deleting the exports field from the package.json file fixes this.
 
 function removeExports(packageName) {
-  const packageJsonPath = `../../../${packageName}/package.json`
+  const packageJsonPath = `../../../node_modules/${packageName}/package.json`
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"))
   delete packageJson["exports"]
   fs.writeFileSync(
