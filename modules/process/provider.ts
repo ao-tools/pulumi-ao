@@ -245,7 +245,7 @@ export class ProcessProvider implements Pulumi.dynamic.ResourceProvider {
       codeChanged = true
     }
     if (news.codeId && !news.code && news.codeId !== olds.codeId) {
-      codeUpdate += Utils.loadCode(news.gatewayUrl, news.codeId)
+      codeUpdate += await Utils.loadCode(news.gatewayUrl, news.codeId)
       codeChanged = true
     }
 

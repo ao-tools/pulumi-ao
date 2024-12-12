@@ -34,7 +34,8 @@ export const loadWallet = (path: string): JsonWebKey =>
 export const loadCode = async (
   gatewayUrl: string,
   id: string
-): Promise<string> => await fetch(gatewayUrl + "/" + id).then((r) => r.text())
+): Promise<string> =>
+  await fetch(gatewayUrl.replace(/\/$/, "") + "/" + id).then((r) => r.text())
 
 export const loadProcessTx = async (
   gatewayUrl: string,
@@ -49,7 +50,7 @@ export const loadProcessTx = async (
       }
     }`
 
-  return await fetch(gatewayUrl + "/graphql", {
+  return await fetch(gatewayUrl.replace(/\/$/, "") + "/graphql", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ query }),

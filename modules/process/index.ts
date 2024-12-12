@@ -50,8 +50,10 @@ export class Process extends Pulumi.dynamic.Resource {
     inputProps.schedulerId =
       config.get("schedulerId") ?? Constants.DEFAULT_SCHEDULER_ID
 
-    const gatewayUrl = config.get("gatewayUrl") ?? Constants.DEFAULT_GATEWAY_URL
-    inputProps.gatewayUrl ?? gatewayUrl.replace(/\/$/, "")
+    inputProps.gatewayUrl =
+      inputProps.gatewayUrl ??
+      config.get("gatewayUrl") ??
+      Constants.DEFAULT_GATEWAY_URL
 
     inputProps.walletPath =
       inputProps.walletPath ?? config.require("walletPath")

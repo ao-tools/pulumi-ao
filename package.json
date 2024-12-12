@@ -3,7 +3,7 @@
   "description": "A Pulumi provider for AO processes",
   "main": "bin/index.js",
   "types": "bin/index.d.ts",
-  "version": "0.0.8",
+  "version": "0.0.12",
   "author": "Kay Plößer",
   "repository": "https://github.com/kay-is/pulumi-ao",
   "license": "MIT",
@@ -15,7 +15,8 @@
   ],
   "scripts": {
     "postinstall": "node scripts/patch-dependencies",
-    "build": "tsc"
+    "build": "tsc",
+    "publish": "npm run build && npm publish"
   },
   "dependencies": {
     "@ardrive/turbo-sdk": "^1.21.0",
