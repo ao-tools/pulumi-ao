@@ -8,6 +8,7 @@ export interface ProcessCodeProviderInputs {
   owner: string | null
   filePath: string
   walletPath: string
+  bundleLuaCode: boolean
   sha256: string | null
 }
 /**
@@ -23,7 +24,9 @@ export class ProcessCodeProvider implements Pulumi.dynamic.ResourceProvider {
       privateKey: Utils.loadWallet(inputs.walletPath) as JWKInterface,
     })
 
-    const codeBundle = Utils.bundleLuaCode(inputs.filePath)
+    const codeBundle = inputs.bundleLuaCode
+      ? Utils.bundleLuaCode(inputs.filePath)
+      : Utils.loadLuaCode(inputs.filePath)
 
     const digest = Utils.hashText(codeBundle)
 
@@ -66,7 +69,9 @@ export class ProcessCodeProvider implements Pulumi.dynamic.ResourceProvider {
     if (olds.name !== news.name) replaces.push("name")
     if (olds.filePath !== news.filePath) replaces.push("filePath")
 
-    const codeBundle = Utils.bundleLuaCode(news.filePath)
+    const codeBundle = news.bundleLuaCode
+      ? Utils.bundleLuaCode(news.filePath)
+      : Utils.loadLuaCode(news.filePath)
 
     const newSha256 = Utils.hashText(codeBundle)
 

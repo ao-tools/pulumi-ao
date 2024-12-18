@@ -77,6 +77,8 @@ export const retry = async <T>(
   return result
 }
 
+export const loadLuaCode = (path: string) => fs.readFileSync(path, "utf8")
+
 export const bundleLuaCode = (path: string) =>
   LuaBundle.bundle(path, {
     ignoredModuleNames: ["json", ".crypto", ".base64", ".pretty", ".utils"],

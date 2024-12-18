@@ -1,8 +1,51 @@
 # Pulumi-AO
 
-This is a dynamic Pulumi resource provider for AO processes.
+This is a dynamic Pulumi resource provider for AO processes. It allows you to
+deploy and manage AO processes and their Lua code using Pulumi.
+
+## Features
+
+This provider offers the following features:
+
+### Seamless integration with existing Pulumi stacks
+
+This provider enables Pulumi to manage AO process, allowing you to integrate
+them with other cloud resources and services supported by Pulumi.
+
+### Lua code bundling and upoads to Arweave
+
+The provider can bundle Lua code with
+[luabundle](https://github.com/Benjamin-Dobell/luabundle), just enter the path
+to your entry file and the provider will take care of the rest. The bundled code
+is then permanently uploaded to Arweave with
+[ArDrive Turbo](https://ardrive.io/turbo-bundler/).
+
+### Direct code injection and code sharing
+
+You can either provide the Lua code directly when defining a `Process` resource
+to quickly write a simple process or use a `ProcessCode` resource to share code
+between multiple processes.
+
+### In-place code updates
+
+Update code or switch from direct code injection to code sharing without
+replacing the process.
+
+### Environment variables
+
+Define a process with environment variables that are available to the Lua code
+in a global `Environment` table. Changing these variables will update the
+process in-place.
 
 ## Setup
+
+### Prerequisites
+
+- [Arweave wallet](https://www.arconnect.io/download)
+
+**Optional:**
+
+- [Turbo Credits](https://docs.ardrive.io/docs/turbo/credits/#how-to-purchase-credits) for code uploads over 100KB.
 
 ### Installing Pulumi
 
@@ -55,18 +98,14 @@ The gateway used to fetch code and tags from deployed processes.
 
     pulumi config set ao:gatewayUrl https://arweave.net
 
-...
-
-    pulumi config set ao:schedulerId _GQ33BkPtZrqxA84vM8Zk-N2aO0toNNu_C-l-rawrBA
-
 ## Usage Examples
+
+### A simple process
 
 ```typescript
 import * as ao from "@kay-is/pulumi-ao"
 
-// Simple process with Lua code
-const process1 = new ao.Process("Process1", {
-  // changes to the code will update the process in-place
+new ao.Process("a", {
   code: `
   local json = require("json")
   Handlers.add(
@@ -76,82 +115,71 @@ const process1 = new ao.Process("Process1", {
         Data = json.encode({Name = Name})
       })
     end
-  )
-  `,
+  )`,
 })
+```
 
-// Two processes with the same Lua code
+### Two processes that share the same code
 
-const code = new ao.ProcessCode("Code", {
-  // required modules are bunlded and uploaded to Arweave
+```typescript
+const code = new ao.ProcessCode("c", {
   filePath: "./path/to/code.lua",
+  bundleLuaCode: true, // Optional, default is false
 })
 
-const process2 = new ao.Process("Process2", {
-  // you can switch between code and codeId between updates
-  // but only one of them can be set at a time
-  codeId: code.id,
-  // The TX that spawns the process can have additional tags
-  // changing these tags replaces the process with a new one
+new ao.Process("a", { codeId: code.id })
+new ao.Process("b", { codeId: code.id })
+```
+
+### Environment variables and custom tags
+
+```typescript
+const processA = new ao.Process("a", {
   customTags: {
-    key: "value",
+    TagName: "TagValue", // Changes require a replacement (i.e., new process ID)
   },
-})
-
-const process3 = new ao.Process("Process3", {
-  codeId: code.id,
-  // The process will have a global Environment table with these values
-  // changing these values will update the process in-place
-  environment: {
-    key: "value",
-  },
-})
-
-const process4 = new ao.Process("Process4", {
-  environment: {
-    process1: process1.id,
-  },
-  // The Environment table will be available inside the Init() function.
-  // This function is called when the process whenever the Environment is created or updated.
   code: `
   local json = require("json")
   Handlers.add(
     "Info", "Info",
     function(message)
       message.reply({
-        Data = json.encode({Environment = Environment})
+        Data = json.encode({
+          Name = Name,
+          TagName = ao.env.Process.Tags.TagName
+        })
       })
     end
-  )
-
-  function Init()
-    Send({Targte = Environment.process1, Action = "Info"})
-  end
-  `,
+  )`,
 })
 
-const process5 = new ao.Process("Process5", {
-  // Scheduler, module, and authority, but these are optional
-  // testnet scheduler
-  schedulerId: "_GQ33BkPtZrqxA84vM8Zk-N2aO0toNNu_C-l-rawrBA",
-  // AOS 2.0.1
-  moduleId: "Do_Uc2Sju_ffp6Ev0AnLVdPtot15rvMjP-a9VVaA5fM",
-  // testnet authority
-  authorityId: "fcoN_xJeisVsPXA-trzVAuIiqO3ydLQxM-L4XbrQKzY",
+new ao.Process("b", {
+  environment: {
+    processAId: processA.id, // Changes are applied in-place (i.e., no new process ID)
+  },
+  // Environment variables are available in the Lua code as Environment table.
+  // They are directly accessible in the Handlers and in the Init() function,
+  // which will be called on create and update of the process code.
+  code: `
+  function Init()
+    Send({Targte = Environment.processAId, Action = "Info"})
+  end
+`,
+})
+```
+
+### Configuration overrides
+
+```typescript
+const process = new ao.Process("a", {
+  schedulerId: "_GQ33BkPtZrqxA84vM8Zk-N2aO0toNNu_C-l-rawrBA", // testnet scheduler
+  moduleId: "Do_Uc2Sju_ffp6Ev0AnLVdPtot15rvMjP-a9VVaA5fM", // AOS 2.0.1
+  authorityId: "fcoN_xJeisVsPXA-trzVAuIiqO3ydLQxM-L4XbrQKzY", // testnet authority
   gatewayUrl: "https://arweave.net",
   walletPath: "/path/to/process_5_wallet.json",
   codeId: code.id,
 })
 
-// Pulumi resource IDs are Arweave TX IDs
-export const processId = process1.id
-export const processName = process1.name
-export const processTags = process1.tags
-export const processCustomTags = process1.customTags
-export const processEnvironment = process1.environment
-export const processCode = process1.code
-export const processCodeId = process2.codeId
-export const processSchedulerId = process.schedulerId
-export const processModuleId = process.moduleId
-export const processAuthorityId = process.authorityId
+// Pulumi resource IDs are Arweave TX IDs and AO Process IDs.
+export const processId = process.id
 ```

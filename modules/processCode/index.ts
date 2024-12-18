@@ -4,6 +4,7 @@ import { ProcessCodeProvider } from "./provider"
 export interface ProcessCodeInputProps {
   name?: Pulumi.Input<string>
   walletPath?: Pulumi.Input<string>
+  bundleLuaCode?: Pulumi.Input<boolean>
   filePath: Pulumi.Input<string>
 }
 
@@ -17,6 +18,8 @@ export class ProcessCode extends Pulumi.dynamic.Resource {
   public readonly name!: Pulumi.Output<string>
   public readonly walletPath!: Pulumi.Output<string>
   public readonly owner!: Pulumi.Output<string>
+  public readonly filePath!: Pulumi.Output<string>
+  public readonly bundleLuaCode!: Pulumi.Output<boolean>
 
   constructor(
     name: string,
@@ -28,6 +31,8 @@ export class ProcessCode extends Pulumi.dynamic.Resource {
     const config = new Pulumi.Config("ao")
     inputProps.walletPath =
       inputProps.walletPath ?? config.require("walletPath")
+
+    inputProps.bundleLuaCode = !!inputProps.bundleLuaCode
 
     // These props can't directly be set by the user
     const outputProps = { owner: null, sha256: null }
