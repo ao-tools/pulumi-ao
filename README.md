@@ -78,7 +78,7 @@ Run the following command and choose the TypeScript template.
 
 ### Installing the Provider
 
-    npm i @kay-is/pulumi-ao
+    npm i @ao-tools/pulumi-ao
 
 ### Configuring the Provider
 
@@ -103,7 +103,7 @@ The gateway used to fetch code and tags from deployed processes.
 ### A simple process
 
 ```typescript
-import * as ao from "@kay-is/pulumi-ao"
+import * as ao from "@ao-tools/pulumi-ao"
 
 new ao.Process("a", {
   code: `
