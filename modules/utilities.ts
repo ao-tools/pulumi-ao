@@ -56,25 +56,29 @@ export const loadProcessTx = async (
     body: JSON.stringify({ query }),
   })
     .then((r) => r.json())
-    .then((r) => r.data.transaction)
+    .then((r) => {
+      if (!r.data.transaction.owner)
+        throw new Error("Can't find process spawn TX on gateway:" + gatewayUrl)
+      return r.data.transaction
+    })
 }
 
 export const retry = async <T>(
   retries: number,
-  fn: () => Promise<T>
+  fn: () => Promise<T>,
+  timeout = 5000
 ): Promise<T> => {
-  let result: T = await fn()
-  while (retries > 0) {
+  let error: Error
+  do {
+    retries--
     try {
-      result = await fn()
-      break
+      return await fn()
     } catch (e) {
-      retries--
-      if (retries === 0) throw e
-      await new Promise((r) => setTimeout(r, 5000))
+      error = e as Error
+      if (retries !== -1) await new Promise((r) => setTimeout(r, timeout))
     }
-  }
-  return result
+  } while (retries >= 0)
+  throw error
 }
 
 export const loadLuaCode = (path: string) => fs.readFileSync(path, "utf8")

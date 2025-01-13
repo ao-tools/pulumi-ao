@@ -35,7 +35,6 @@ export class ProcessCodeProvider implements Pulumi.dynamic.ResourceProvider {
       fileStreamFactory: () => Utils.createStream(codeBundle),
       dataItemOpts: {
         tags: [
-          { name: "Content-Type", value: "text/plain" },
           { name: "Name", value: inputs.name },
           { name: "Sha256", value: digest },
         ],
