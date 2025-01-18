@@ -9,7 +9,7 @@ export interface ProcessInputProps {
   customTags?: Pulumi.Input<Record<string, string>>
   gatewayUrl?: Pulumi.Input<string>
   walletPath?: Pulumi.Input<string>
-  environment?: Pulumi.Input<Record<string, string>>
+  environment?: Pulumi.Input<Record<string, string | Pulumi.Output<string>>>
   moduleId?: Pulumi.Input<string>
   schedulerId?: Pulumi.Input<string>
   authorityId?: Pulumi.Input<string>

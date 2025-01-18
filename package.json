@@ -3,7 +3,7 @@
   "description": "A Pulumi provider for AO processes",
   "main": "bin/index.js",
   "types": "bin/index.d.ts",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "author": "Kay Plößer",
   "repository": "https://github.com/ao-tools/pulumi-ao",
   "license": "MIT",
